@@ -3,7 +3,7 @@ import { Box, Button, TextField, Typography, Avatar, useTheme } from "@mui/mater
 import VolunteerActivismOutlinedIcon from '@mui/icons-material/VolunteerActivismOutlined';
 import { Link } from "react-router-dom";
 
-const VolunteerLogin = () => {
+const VolunteerLogin = ({ onLogin }) => {
     const theme = useTheme();
     const [formData, setFormData] = useState({
         email: "",
@@ -18,6 +18,7 @@ const VolunteerLogin = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         // Add form submission logic here
+        onLogin();
         console.log(formData);
     };
 

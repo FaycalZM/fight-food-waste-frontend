@@ -3,7 +3,7 @@ import { Box, Button, TextField, Typography, Avatar, useTheme } from "@mui/mater
 import StorefrontOutlinedIcon from '@mui/icons-material/StorefrontOutlined';
 import { Link } from "react-router-dom";
 
-const MerchantLogin = () => {
+const MerchantLogin = ({ onLogin }) => {
     const theme = useTheme();
     const [formData, setFormData] = useState({
         email: "",
@@ -18,6 +18,7 @@ const MerchantLogin = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         // Add form submission logic here
+        onLogin();
         console.log(formData);
     };
 

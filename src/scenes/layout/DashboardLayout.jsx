@@ -3,12 +3,12 @@ import Sidebar from '../global/Sidebar'
 import Topbar from '../global/Topbar'
 import { Outlet } from 'react-router-dom'
 
-const DashboardLayout = ({ isSidebar, setIsSidebar }) => {
+const DashboardLayout = ({ userType }) => {
     return (
         <div className="app dashboard-layout">
-            <Sidebar isSidebar={isSidebar} />
+            <Sidebar userType={userType} />
             <main className="content">
-                <Topbar setIsSidebar={setIsSidebar} />
+                <Topbar />
                 <Outlet />
             </main>
         </div>

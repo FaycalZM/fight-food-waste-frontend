@@ -20,12 +20,20 @@ import MerchantLogin from "./scenes/merchant/auth/Login";
 import VolunteerSignup from "./scenes/volunteer/auth/Signup";
 import VolunteerLogin from "./scenes/volunteer/auth/Login";
 import NotFound404 from "./scenes/_404";
-import Signup from "./scenes/signup/Signup";
+
 
 
 function App() {
   const [theme, colorMode] = useMode();
   const [isSidebar, setIsSidebar] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userType, setUserType] = useState("admin");
+
+
+  const login = (userType) => {
+    setIsAuthenticated(true);
+    setUserType(userType);
+  }
 
   return (
     <ColorModeContext.Provider value={colorMode}>
@@ -33,28 +41,26 @@ function App() {
         <CssBaseline />
 
         <Routes>
-
-          <Route path="signup" element={<Signup />} />
           {/* Admin Login */}
-          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/admin/login" element={<AdminLogin onLogin={() => { login("admin") }} />} />
 
           {/* Merchant Auth */}
           <Route path="/merchant/signup" element={<MerchantSignup />} />
-          <Route path="/merchant/login" element={<MerchantLogin />} />
+          <Route path="/merchant/login" element={<MerchantLogin onLogin={() => { login("merchant") }} />} />
 
           {/* Volunteer Auth */}
           <Route path="/volunteer/signup" element={<VolunteerSignup />} />
-          <Route path="/volunteer/login" element={<VolunteerLogin />} />
+          <Route path="/volunteer/login" element={<VolunteerLogin onLogin={() => { login("volunteer") }} />} />
 
           {/* Nested routes under the dashboard layout */}
           <Route
             path="/"
-            element={<DashboardLayout isSidebar={isSidebar} setIsSidebar={setIsSidebar} />}
+            element={<DashboardLayout
+              userType={userType}
+            />}
           >
-
-
-            <Route path="/dashboard" element={<Dashboard />} />
-            {/* <Route path="/team" element={<Team />} />
+            <Route path="/admin/dashboard" element={<Dashboard />} />
+            <Route path="/team" element={<Team />} />
             <Route path="/contacts" element={<Contacts />} />
             <Route path="/invoices" element={<Invoices />} />
             <Route path="/form" element={<Form />} />
@@ -63,7 +69,7 @@ function App() {
             <Route path="/line" element={<Line />} />
             <Route path="/faq" element={<FAQ />} />
             <Route path="/calendar" element={<Calendar />} />
-            <Route path="/geography" element={<Geography />} /> */}
+            <Route path="/geography" element={<Geography />} />
 
           </Route>
           {/* 404 Not Found Page */}

@@ -1,7 +1,7 @@
 import React from 'react'
 import { Typography, useTheme } from "@mui/material";
-import { Item } from '../../global/Sidebar'
-import { tokens } from '../../../theme';
+import { Item } from '@/scenes/global/Sidebar';
+import { tokens } from '@/theme';
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import CardMembershipOutlinedIcon from '@mui/icons-material/CardMembershipOutlined';
 import LoyaltyOutlinedIcon from '@mui/icons-material/LoyaltyOutlined';
@@ -41,7 +41,7 @@ const AdminSidebarItems = ({ selected, setSelected }) => {
             />
             <Item
                 title="Partners"
-                to="/admin/merchants/valid"
+                to="/admin/merchants/partners"
                 icon={<LoyaltyOutlinedIcon />}
                 selected={selected}
                 setSelected={setSelected}
@@ -66,7 +66,7 @@ const AdminSidebarItems = ({ selected, setSelected }) => {
             />
             <Item
                 title="Members"
-                to="/admin/volunteers/valid"
+                to="/admin/volunteers/members"
                 icon={<HowToRegOutlinedIcon />}
                 selected={selected}
                 setSelected={setSelected}

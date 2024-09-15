@@ -43,16 +43,18 @@ const Team = () => {
         return (
           <Box
             width="60%"
-            m="0 auto"
+            height="80%"
+            m="5px auto"
             p="5px"
             display="flex"
             justifyContent="center"
+            alignItems="center"
             backgroundColor={
               access === "admin"
                 ? colors.greenAccent[600]
                 : access === "manager"
-                ? colors.greenAccent[700]
-                : colors.greenAccent[700]
+                  ? colors.greenAccent[700]
+                  : colors.greenAccent[700]
             }
             borderRadius="4px"
           >

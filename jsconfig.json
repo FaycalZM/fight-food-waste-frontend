@@ -10,7 +10,22 @@
             ],
             "@components": [
                 "./src/components"
-            ]
+            ],
+            "@scenes": [
+                "./src/scenes"
+            ],
+            "@hooks": [
+                "./src/hooks"
+            ],
+            "@utils": [
+                "./src/utils"
+            ],
+            "@assets": [
+                "./src/assets"
+            ],
+            "@styles": [
+                "./src/styles"
+            ],
         },
         "module": "ESNext",
         "moduleResolution": "Bundler",

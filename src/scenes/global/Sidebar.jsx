@@ -3,12 +3,12 @@ import { ProSidebar, Menu, MenuItem } from "react-pro-sidebar";
 import { Box, IconButton, Typography, useTheme } from "@mui/material";
 import { Link } from "react-router-dom";
 import "react-pro-sidebar/dist/css/styles.css";
-import { tokens } from "../../theme";
+import { tokens } from "@/theme";
 
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
-import VolunteerSidebarItems from "../volunteer/sidebar";
-import MerchantSidebarItems from "../merchant/sidebar";
-import AdminSidebarItems from "../admin/sidebar";
+import VolunteerSidebarItems from "@/scenes/volunteer/sidebar";
+import MerchantSidebarItems from "@/scenes/merchant/sidebar";
+import AdminSidebarItems from "@/scenes/admin/sidebar";
 
 export const Item = ({ title, to, icon, selected, setSelected }) => {
   const theme = useTheme();
@@ -109,7 +109,9 @@ const Sidebar = ({ userType }) => {
             </Box>
           )}
 
-          <Box paddingLeft={isCollapsed ? undefined : "10%"}>
+          <Box
+            paddingLeft={isCollapsed ? undefined : "10%"}
+          >
             {/* Admin Sidebar items*/}
             {
               userType == "admin" && <AdminSidebarItems selected={selected} setSelected={setSelected} />

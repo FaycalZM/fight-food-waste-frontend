@@ -3,19 +3,16 @@
 html,
 body,
 #root,
-.app {
-  height: 100%;
-  width: 100%;
-  font-family: "Source Sans Pro", sans-serif;
-  display: flex;
-  position: relative;
-}
-
+.app,
 .content {
   height: 100%;
   width: 100%;
-  padding-right: 15px;
   font-family: "Source Sans Pro", sans-serif;
+}
+
+.app {
+  display: flex;
+  position: relative;
 }
 
 ::-webkit-scrollbar {

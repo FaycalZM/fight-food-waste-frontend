@@ -24,6 +24,22 @@ import NewSubscriptions from "@/scenes/admin/merchants_management/NewSubscriptio
 import Partners from "@/scenes/admin/merchants_management/Partners";
 import NewApplications from "@/scenes/admin/volunteers_management/NewApplications";
 import Members from "@/scenes/admin/volunteers_management/Members";
+import Stocks from "@/scenes/admin/stocks/Stocks";
+import AddStock from "@/scenes/admin/stocks/AddStock";
+import AddProductToStock from "@/scenes/admin/stocks/AddProduct";
+import StockDetails from "@/scenes/admin/stocks/Details";
+import ProductDetails from "@/scenes/admin/stocks/ProductDetails";
+import CollectionPlanning from "@/scenes/admin/collections/Planification";
+import CollectionsHistory from "@/scenes/admin/collections/History";
+import CollectionDetails from "./scenes/admin/collections/Details";
+import InProgressCollections from "./scenes/admin/collections/InProgress";
+import UpdateCollection from "./scenes/admin/collections/Update";
+import DistributionsPlanning from "./scenes/admin/distributions/Planification";
+import AddProductToDistribution from "./scenes/admin/distributions/AddProduct";
+import AddBeneficiaryToDistribution from "./scenes/admin/distributions/AddBeneficiary";
+import DistributionsHistory from "./scenes/admin/distributions/History";
+import DistributionsDetails from "./scenes/admin/distributions/Details";
+import InProgressDistributions from "./scenes/admin/distributions/InProgress";
 
 
 
@@ -65,10 +81,32 @@ function App() {
           >
             {/* Admin routes */}
             <Route path="/admin/dashboard" element={<Dashboard />} />
+
             <Route path="/admin/merchants/new" element={<NewSubscriptions />} />
             <Route path="/admin/merchants/partners" element={<Partners />} />
+
             <Route path="/admin/volunteers/new" element={<NewApplications />} />
             <Route path="/admin/volunteers/members" element={<Members />} />
+
+            <Route path="/admin/stocks" element={<Stocks />} />
+            <Route path="/admin/stocks/add" element={<AddStock />} />
+            <Route path="/admin/stocks/:id/products/add" element={<AddProductToStock />} />
+            <Route path="/admin/stocks/:id" element={<StockDetails />} />
+            <Route path="/admin/stocks/products/:id" element={<ProductDetails />} />
+
+            <Route path="/admin/collections/planning" element={<CollectionPlanning />} />
+            <Route path="/admin/collections/history" element={<CollectionsHistory />} />
+            <Route path="/admin/collections/:id" element={<CollectionDetails />} />
+            <Route path="/admin/collections/in-progress" element={<InProgressCollections />} />
+            <Route path="/admin/collections/:id/update" element={<UpdateCollection />} />
+
+            <Route path="/admin/distributions/planning" element={<DistributionsPlanning />} />
+            <Route path="/admin/distributions/history" element={<DistributionsHistory />} />
+            <Route path="/admin/distributions/:id" element={<DistributionsDetails />} />
+            <Route path="/admin/distributions/in-progress" element={<InProgressDistributions />} />
+            <Route path="/admin/distributions/:id/add-product" element={<AddProductToDistribution />} />
+            <Route path="/admin/distributions/:id/add-beneficiary" element={<AddBeneficiaryToDistribution />} />
+
 
             {/* Merchant routes */}
 

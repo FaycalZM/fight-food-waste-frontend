@@ -12,12 +12,14 @@ import PlaylistAddCircleOutlinedIcon from '@mui/icons-material/PlaylistAddCircle
 import BrowseGalleryOutlinedIcon from '@mui/icons-material/BrowseGalleryOutlined';
 import ConnectWithoutContactOutlinedIcon from '@mui/icons-material/ConnectWithoutContactOutlined';
 import HistoryOutlinedIcon from '@mui/icons-material/HistoryOutlined';
+import HourglassBottomOutlinedIcon from '@mui/icons-material/HourglassBottomOutlined';
 
 const AdminSidebarItems = ({ selected, setSelected }) => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
     return (
         <>
+            {/* General information */}
             <Item
                 title="Dashboard"
                 to="/admin/dashboard"
@@ -25,10 +27,16 @@ const AdminSidebarItems = ({ selected, setSelected }) => {
                 selected={selected}
                 setSelected={setSelected}
             />
+            {/* users management (merchants management +  volunteers management)
+                      ->  merchants management -> new subscriptions (approve / decline) + existing subscriptions (block/ unblock)
+                      ->  volunteers management -> new applications (approve / decline) + existing applications  (block/ unblock)
+                      */}
             <Typography
                 variant="h6"
                 color={colors.grey[300]}
-                sx={{ m: "15px 0 5px 20px" }}
+                sx={{
+                    m: "15px 0 5px 20px",
+                }}
             >
                 Merchants
             </Typography>
@@ -46,10 +54,6 @@ const AdminSidebarItems = ({ selected, setSelected }) => {
                 selected={selected}
                 setSelected={setSelected}
             />
-            {/* users management (merchants management +  volunteers management)
-                  ->  merchants management -> new subscriptions (approve / decline) + existing subscriptions (block/ unblock)
-                  ->  volunteers management -> new applications (approve / decline) + existing applications  (block/ unblock)
-                  */}
             <Typography
                 variant="h6"
                 color={colors.grey[300]}
@@ -111,6 +115,13 @@ const AdminSidebarItems = ({ selected, setSelected }) => {
                 selected={selected}
                 setSelected={setSelected}
             />
+            <Item
+                title="In Progress"
+                to="/admin/collections/in-progress"
+                icon={< HourglassBottomOutlinedIcon />}
+                selected={selected}
+                setSelected={setSelected}
+            />
             <Typography
                 variant="h6"
                 color={colors.grey[300]}
@@ -129,6 +140,13 @@ const AdminSidebarItems = ({ selected, setSelected }) => {
                 title="Distributions history"
                 to="/admin/distributions/history"
                 icon={<HistoryOutlinedIcon />}
+                selected={selected}
+                setSelected={setSelected}
+            />
+            <Item
+                title="In Progress"
+                to="/admin/distributions/in-progress"
+                icon={< HourglassBottomOutlinedIcon />}
                 selected={selected}
                 setSelected={setSelected}
             />

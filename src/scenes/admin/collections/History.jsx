@@ -76,10 +76,10 @@ const CollectionsHistory = () => {
                             View Details
                         </Button>
                         <Button
+                            href={`${apiUrl}/admin/collections/${id}/pdf`}
                             color="success"
                             variant="contained"
                             startIcon={<DownloadOutlinedIcon />}
-                        // TODO: add download report function
                         >
                             Download Report
                         </Button>

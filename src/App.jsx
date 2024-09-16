@@ -102,8 +102,6 @@ function App() {
             <Route path="/admin/distributions/history" element={<ProtectedRoute role={"admin"} children={<DistributionsHistory />} />} />
             <Route path="/admin/distributions/:id" element={<ProtectedRoute role={"admin"} children={<DistributionsDetails />} />} />
             <Route path="/admin/distributions/in-progress" element={<ProtectedRoute role={"admin"} children={<InProgressDistributions />} />} />
-            <Route path="/admin/distributions/:id/add-product" element={<ProtectedRoute role={"admin"} children={<AddProductToDistribution />} />} />
-            <Route path="/admin/distributions/:id/add-beneficiary" element={<ProtectedRoute role={"admin"} children={<AddBeneficiaryToDistribution />} />} />
 
 
             {/* Merchant routes */}

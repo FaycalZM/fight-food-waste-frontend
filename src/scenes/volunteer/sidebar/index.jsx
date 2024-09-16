@@ -8,7 +8,7 @@ const VolunteerSidebarItems = ({ selected, setSelected }) => {
             {/* missions schedule page */}
             <Item
                 title="Schedule"
-                to="/volunteer/schedule"
+                to="/volunteer/home"
                 icon={<CalendarMonthOutlinedIcon />}
                 selected={selected}
                 setSelected={setSelected}

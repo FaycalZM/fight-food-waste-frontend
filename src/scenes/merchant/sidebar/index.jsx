@@ -1,4 +1,4 @@
-import { Item } from "../../global/Sidebar"
+import { Item } from "@/scenes/global/Sidebar";
 import CategoryOutlinedIcon from '@mui/icons-material/CategoryOutlined';
 import NotificationImportantOutlinedIcon from '@mui/icons-material/NotificationImportantOutlined';
 
@@ -6,19 +6,11 @@ import NotificationImportantOutlinedIcon from '@mui/icons-material/NotificationI
 const MerchantSidebarItems = ({ selected, setSelected }) => {
     return (
         <>
-            {/* products management (CRUD) */}
+            {/* Service Request page */}
             <Item
-                title="Products management"
-                to="/merchant/products"
+                title="Service Request"
+                to="/merchant/home"
                 icon={<CategoryOutlinedIcon />}
-                selected={selected}
-                setSelected={setSelected}
-            />
-            {/* subscription renewal reminders */}
-            <Item
-                title="Subscription"
-                to="/merchant/subscription"
-                icon={<NotificationImportantOutlinedIcon />}
                 selected={selected}
                 setSelected={setSelected}
             />

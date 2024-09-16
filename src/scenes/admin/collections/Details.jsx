@@ -30,7 +30,6 @@ const CollectionDetails = () => {
         axios
             .get(`${apiUrl}/admin/collections/${id}`)
             .then((res) => {
-                console.log(res.data);
                 setCollectionDetails(res.data.collection);
                 setCollectedProducts(res.data.collection.products);
             })
@@ -98,7 +97,7 @@ const CollectionDetails = () => {
                                     <TableCell>{collectedProduct.product_id}</TableCell>
                                     <TableCell>
                                         {
-                                            products.find((product) => product.id === collectedProduct.product_id)?.product_name
+                                            products.filter((product) => product.id == collectedProduct.product_id)[0]?.product_name
                                         }
                                     </TableCell>
                                     <TableCell align="right">{collectedProduct.quantity_collected}</TableCell>

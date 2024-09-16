@@ -94,7 +94,7 @@ const InProgressDistributions = () => {
 
     return (
         <Box m="20px">
-            <Header title="Collections In Progress" subtitle="Manage the collections happening now" />
+            <Header title="Distributions In Progress" subtitle="Manage the distributions happening now" />
             <Box
                 m="40px 0 0 0"
                 height="75vh"

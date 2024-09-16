@@ -76,13 +76,14 @@ const DistributionsHistory = () => {
                             View Details
                         </Button>
                         <Button
+                            href={`${apiUrl}/admin/distributions/${id}/pdf`}
                             color="success"
                             variant="contained"
                             startIcon={<DownloadOutlinedIcon />}
-                        // TODO: add download report function
                         >
                             Download Report
                         </Button>
+                        {/* <a href={`${apiUrl}/admin/distributions/${id}/pdf`}>Download Report</a> */}
                         <Button
                             color="error"
                             variant="contained"

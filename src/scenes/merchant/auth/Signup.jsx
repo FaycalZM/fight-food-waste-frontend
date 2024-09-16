@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Box, Button, TextField, Typography, Avatar, useTheme } from "@mui/material";
 import StorefrontOutlinedIcon from '@mui/icons-material/StorefrontOutlined';
 import { Link } from "react-router-dom";
+import axios from "axios";
 
 const MerchantSignup = () => {
     const theme = useTheme();
@@ -11,8 +12,11 @@ const MerchantSignup = () => {
         address: "",
         contact_info: "",
         password: "",
-        confirmPassword: "",
+        password_confirmation: "",
     });
+
+    const [response, setResponse] = useState("");
+    const [error, setError] = useState("");
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -21,8 +25,17 @@ const MerchantSignup = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Add form submission logic here
-        console.log(formData);
+        axios
+            .post("http://localhost:8000/api/merchant/register", formData)
+            .then((response) => {
+                if (response.status === 200) {
+                    setResponse("Account created successfully, Please wait until your account is approved");
+                } else {
+                    setError(response.data.message);
+                }
+            }).catch((error) => {
+                setError(error.response.data.message);
+            });
     };
 
     return (
@@ -61,6 +74,16 @@ const MerchantSignup = () => {
                 <Typography variant="h4" align="center" gutterBottom>
                     Merchant Sign Up
                 </Typography>
+                {response && (
+                    <Typography variant="body2" color="success" align="center" sx={{ mb: 2 }}>
+                        {response}
+                    </Typography>
+                )}
+                {error && (
+                    <Typography variant="body2" color="error" align="center" sx={{ mb: 2 }}>
+                        {error}
+                    </Typography>
+                )}
                 <form onSubmit={handleSubmit}>
                     <TextField
                         label="Name"
@@ -111,8 +134,8 @@ const MerchantSignup = () => {
                     />
                     <TextField
                         label="Confirm Password"
-                        name="confirmPassword"
-                        value={formData.confirmPassword}
+                        name="password_confirmation"
+                        value={formData.password_confirmation}
                         onChange={handleChange}
                         fullWidth
                         margin="normal"

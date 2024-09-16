@@ -13,6 +13,12 @@ const volunteersInitialState = {
     active: [],
 }
 
+const collectionsInitialState = {
+    scheduled: [],
+    in_progress: [],
+    completed: [],
+}
+
 
 export const DataContext = createContext();
 
@@ -122,6 +128,24 @@ export const DataProvider = ({ children }) => {
             })
     }, []);
 
+    // Collections state
+    const [collections, setCollections] = useState(collectionsInitialState);
+
+    useEffect(() => {
+        // fetch collections
+        axios
+            .get(`${apiUrl}/admin/all_collections`)
+            .then((res) => {
+                setCollections({
+                    scheduled: res.data.filter((collection) => collection.collection_status === "Scheduled"),
+                    in_progress: res.data.filter((collection) => collection.collection_status === "In Progress"),
+                    completed: res.data.filter((collection) => collection.collection_status === "Completed"),
+                });
+            }).catch((error) => {
+                console.log(error);
+            })
+    }, []);
+
     // Auth functions
     const login = (userType) => {
         setIsAuthenticated(true);
@@ -148,10 +172,12 @@ export const DataProvider = ({ children }) => {
                 volunteers,
                 stocks,
                 products,
+                collections,
                 setMerchants,
                 setVolunteers,
                 setStocks,
                 setProducts,
+                setCollections,
             }}>
             {children}
         </DataContext.Provider>

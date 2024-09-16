@@ -7,12 +7,32 @@ import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined";
 import Header from "@/components/Header";
 import { useNavigate } from "react-router";
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import { useContext } from "react";
+import { DataContext } from "@/context/DataContext";
+import axios from "axios";
+import apiUrl from "@/base";
 
 
 const CollectionsHistory = () => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
     const navigate = useNavigate();
+
+    const { collections, setCollections } = useContext(DataContext);
+
+    const delete_collection = (id) => {
+        axios
+            .get(`${apiUrl}/admin/collections/${id}/delete`)
+            .then((res) => {
+                setCollections({
+                    ...collections,
+                    completed: collections.completed.filter((collection) => collection.id !== id),
+                });
+            }).catch((error) => {
+                console.log(error);
+            })
+    }
+
     const columns = [
         {
             field: "id",
@@ -66,6 +86,7 @@ const CollectionsHistory = () => {
                             color="error"
                             variant="contained"
                             startIcon={<CloseOutlinedIcon />}
+                            onClick={() => delete_collection(id)}
                         >
                             Delete History
                         </Button>
@@ -107,7 +128,7 @@ const CollectionsHistory = () => {
                     },
                 }}
             >
-                <DataGrid checkboxSelection rows={mockDataTeam} columns={columns} />
+                <DataGrid checkboxSelection rows={collections.completed} columns={columns} />
             </Box>
         </Box>
     );

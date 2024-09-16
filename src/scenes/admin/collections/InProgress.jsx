@@ -7,12 +7,33 @@ import Header from "@/components/Header";
 import { useNavigate } from "react-router";
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
+import { useContext } from "react";
+import { DataContext } from "@/context/DataContext";
+import axios from "axios";
+import apiUrl from "@/base";
 
 
 const InProgressCollections = () => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
     const navigate = useNavigate();
+
+    const { collections, setCollections } = useContext(DataContext);
+
+    const close_collection = (id) => {
+        axios
+            .get(`${apiUrl}/admin/collections/${id}/close`)
+            .then((res) => {
+                setCollections({
+                    ...collections,
+                    in_progress: collections.in_progress.filter((collection) => collection.id !== id),
+                    completed: [...collections.completed, res.data.collection],
+                });
+            }).catch((error) => {
+                console.log(error);
+            })
+    }
+
     const columns = [
         {
             field: "id",
@@ -59,6 +80,7 @@ const InProgressCollections = () => {
                             color="error"
                             variant="contained"
                             startIcon={<CloseOutlinedIcon />}
+                            onClick={() => close_collection(id)}
                         >
                             Close Collection
                         </Button>
@@ -100,7 +122,7 @@ const InProgressCollections = () => {
                     },
                 }}
             >
-                <DataGrid checkboxSelection rows={mockDataTeam} columns={columns} />
+                <DataGrid checkboxSelection rows={collections.in_progress} columns={columns} />
             </Box>
         </Box>
     );

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import {
     Box,
     Typography,
@@ -12,38 +12,31 @@ import {
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { useParams } from "react-router-dom";
+import axios from "axios";
+import apiUrl from "@/base";
+import { DataContext } from "@/context/DataContext";
 
 const CollectionDetails = () => {
     const { id } = useParams(); // Get collection ID from route
     const theme = useTheme(); // Use the provided theme
 
+    const { products } = useContext(DataContext);
     // State to hold collection details
-    const [collectionDetails, setCollectionDetails] = useState({
-        scheduledTime: "",
-        route: "",
-        volunteersCount: 0,
-        productsCollected: [],
-    });
+    const [collectionDetails, setCollectionDetails] = useState({});
+    const [collectedProducts, setCollectedProducts] = useState([]);
 
-    // Simulate fetching collection details based on ID (replace with actual API call)
+    // fetch collection details based on ID 
     useEffect(() => {
-        const fetchCollectionDetails = async () => {
-            // Replace this with an actual API call using `id`
-            const mockData = {
-                scheduledTime: "2024-10-01T10:00",
-                route: "Route A",
-                volunteersCount: 5,
-                productsCollected: [
-                    { id: 1, name: "Product A", quantity: 100 },
-                    { id: 2, name: "Product B", quantity: 50 },
-                    { id: 3, name: "Product C", quantity: 25 },
-                ],
-            };
-
-            setCollectionDetails(mockData);
-        };
-
-        fetchCollectionDetails();
+        axios
+            .get(`${apiUrl}/admin/collections/${id}`)
+            .then((res) => {
+                console.log(res.data);
+                setCollectionDetails(res.data.collection);
+                setCollectedProducts(res.data.collection.products);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
     }, [id]);
 
     return (
@@ -76,13 +69,13 @@ const CollectionDetails = () => {
 
                 <Paper elevation={3} sx={{ p: 2, mb: 3 }}>
                     <Typography variant="h6" gutterBottom>
-                        Scheduled Time: {collectionDetails.scheduledTime}
+                        Scheduled Time: {collectionDetails.scheduled_time}
                     </Typography>
                     <Typography variant="h6" gutterBottom>
                         Route: {collectionDetails.route}
                     </Typography>
                     <Typography variant="h6" gutterBottom>
-                        Volunteers Count: {collectionDetails.volunteersCount}
+                        Volunteers Count: {collectionDetails.volunteers_count}
                     </Typography>
                 </Paper>
 
@@ -100,11 +93,15 @@ const CollectionDetails = () => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {collectionDetails.productsCollected.map((product) => (
-                                <TableRow key={product.id}>
-                                    <TableCell>{product.id}</TableCell>
-                                    <TableCell>{product.name}</TableCell>
-                                    <TableCell align="right">{product.quantity}</TableCell>
+                            {collectedProducts.map((collectedProduct) => (
+                                <TableRow key={collectedProduct.product_id}>
+                                    <TableCell>{collectedProduct.product_id}</TableCell>
+                                    <TableCell>
+                                        {
+                                            products.find((product) => product.id === collectedProduct.product_id)?.product_name
+                                        }
+                                    </TableCell>
+                                    <TableCell align="right">{collectedProduct.quantity_collected}</TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>

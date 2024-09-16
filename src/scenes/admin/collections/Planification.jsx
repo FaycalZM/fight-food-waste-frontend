@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import {
     Box,
     Button,
@@ -11,9 +11,18 @@ import {
     TableHead,
     TableRow,
     Paper,
+    FormGroup,
+    FormControlLabel,
+    Checkbox,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
+import { DataContext } from "@/context/DataContext";
+import axios from "axios";
+import apiUrl from "@/base";
+import PlayCircleFilledWhiteOutlinedIcon from '@mui/icons-material/PlayCircleFilledWhiteOutlined';
+
+
 
 const CollectionPlanning = () => {
     const theme = useTheme(); // Use the provided theme
@@ -21,53 +30,75 @@ const CollectionPlanning = () => {
 
     // State to hold form data
     const [formData, setFormData] = useState({
-        scheduledTime: "",
+        scheduled_time: "",
         route: "",
-        volunteersCount: "",
+        volunteers_count: "",
+        user_ids: [],
     });
 
-    // State to hold scheduled collections
-    const [collections, setCollections] = useState([]);
+    const {
+        merchants,
+        collections,
+        setCollections
+    } = useContext(DataContext);
 
-    // Simulate fetching scheduled collections (replace with actual API call)
-    useEffect(() => {
-        const fetchScheduledCollections = async () => {
-            const mockData = [
-                {
-                    id: 1,
-                    scheduledTime: "2024-10-01T10:00",
-                    route: "Route A",
-                    volunteersCount: 5,
-                },
-                {
-                    id: 2,
-                    scheduledTime: "2024-10-05T14:00",
-                    route: "Route B",
-                    volunteersCount: 3,
-                },
-            ];
-            setCollections(mockData);
-        };
-
-        fetchScheduledCollections();
-    }, []);
+    const [error, setError] = useState("");
+    const [response, setResponse] = useState("");
 
     // Handle input changes
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
     };
+    // Handle checkbox change for selecting multiple users
+    const handleUserSelection = (event) => {
+        const { value, checked } = event.target;
+        setFormData((prevData) => {
+            if (checked) {
+                // Add user to selectedUsers if checked
+                return { ...prevData, user_ids: [...prevData.user_ids, value] };
+            } else {
+                // Remove user from selectedUsers if unchecked
+                return { ...prevData, user_ids: prevData.user_ids.filter((user_id) => user_id !== value) };
+            }
+        });
+    };
 
+    const create_collection = (formData) => {
+        axios
+            .post(`${apiUrl}/admin/add_collection`, formData)
+            .then((res) => {
+                setCollections({
+                    ...collections,
+                    scheduled: [...collections.scheduled, res.data.collection],
+                });
+                setResponse(res.data.message);
+                setError("");
+            }).catch((error) => {
+                setError(error.response.data.message);
+                setResponse("");
+            })
+    }
+
+    const start_collection = (id) => {
+        axios
+            .get(`${apiUrl}/admin/collections/${id}/start`)
+            .then((res) => {
+                // update state
+                setCollections({
+                    ...collections,
+                    scheduled: collections.scheduled.filter((collection) => collection.id !== id),
+                    in_progress: [...collections.in_progress, res.data.collection],
+                });
+            }).catch((error) => {
+                console.log(error);
+            });
+    }
     // Handle form submission
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Logic to handle creating a new collection (e.g., send data to the server)
-        const newCollection = {
-            id: collections.length + 1,
-            ...formData,
-        };
-        setCollections([...collections, newCollection]);
-        setFormData({ scheduledTime: "", route: "", volunteersCount: "" });
+        formData.user_ids = formData.user_ids.join(",");
+        create_collection(formData);
     };
 
     return (
@@ -97,12 +128,22 @@ const CollectionPlanning = () => {
                 <Typography variant="h4" align="center" gutterBottom>
                     Plan a New Collection
                 </Typography>
+                {error && (
+                    <Typography variant="body2" color="error" align="center" sx={{ mb: 2 }}>
+                        {error}
+                    </Typography>
+                )}
+                {response && (
+                    <Typography variant="body2" color="success" align="center" sx={{ mb: 2 }}>
+                        {response}
+                    </Typography>
+                )}
                 <form onSubmit={handleSubmit}>
                     {/* Scheduled Time */}
                     <TextField
                         label="Scheduled Time"
-                        name="scheduledTime"
-                        value={formData.scheduledTime}
+                        name="scheduled_time"
+                        value={formData.scheduled_time}
                         onChange={handleChange}
                         fullWidth
                         margin="normal"
@@ -129,8 +170,8 @@ const CollectionPlanning = () => {
                     {/* Volunteers Count */}
                     <TextField
                         label="Volunteers Count"
-                        name="volunteersCount"
-                        value={formData.volunteersCount}
+                        name="volunteers_count"
+                        value={formData.volunteers_count}
                         onChange={handleChange}
                         fullWidth
                         margin="normal"
@@ -138,6 +179,25 @@ const CollectionPlanning = () => {
                         type="number" // number input for volunteers count
                         slotProps={{ input: { min: 1 } }} // restrict to positive numbers
                     />
+                    {/* checkbox to select multiple users */}
+                    <Typography variant="h5" gutterBottom my={2} >
+                        Select Merchants
+                    </Typography>
+                    <FormGroup>
+                        {merchants.active.map((merchant) => (
+                            <FormControlLabel
+                                key={merchant.id}
+                                control={
+                                    <Checkbox
+                                        value={merchant.id}
+                                        checked={formData.user_ids.includes(String(merchant.id))}
+                                        onChange={handleUserSelection}
+                                    />
+                                }
+                                label={merchant.name}
+                            />
+                        ))}
+                    </FormGroup>
 
                     {/* Submit Button */}
                     <Button
@@ -174,15 +234,26 @@ const CollectionPlanning = () => {
                                 <TableCell>Scheduled Time</TableCell>
                                 <TableCell>Route</TableCell>
                                 <TableCell align="right">Volunteers Count</TableCell>
+                                <TableCell align="center">Actions</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {collections.map((collection) => (
+                            {collections.scheduled.map((collection) => (
                                 <TableRow key={collection.id}>
                                     <TableCell>{collection.id}</TableCell>
-                                    <TableCell>{collection.scheduledTime}</TableCell>
+                                    <TableCell>{collection.scheduled_time}</TableCell>
                                     <TableCell>{collection.route}</TableCell>
-                                    <TableCell align="right">{collection.volunteersCount}</TableCell>
+                                    <TableCell align="right">{collection.volunteers_count}</TableCell>
+                                    <TableCell align="center">
+                                        <Button
+                                            color="secondary"
+                                            variant="contained"
+                                            startIcon={<PlayCircleFilledWhiteOutlinedIcon />}
+                                            onClick={() => start_collection(collection.id)}
+                                        >
+                                            Start Collection
+                                        </Button>
+                                    </TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>

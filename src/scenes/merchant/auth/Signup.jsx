@@ -3,6 +3,7 @@ import { Box, Button, TextField, Typography, Avatar, useTheme } from "@mui/mater
 import StorefrontOutlinedIcon from '@mui/icons-material/StorefrontOutlined';
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import apiUrl from "@/base";
 
 const MerchantSignup = () => {
     const theme = useTheme();
@@ -28,7 +29,7 @@ const MerchantSignup = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         axios
-            .post("http://localhost:8000/api/merchant/register", formData)
+            .post(`${apiUrl}/merchant/register`, formData)
             .then((response) => {
                 if (response.status === 200) {
                     setResponse("Account created successfully, Please wait until your account is approved");
@@ -43,7 +44,8 @@ const MerchantSignup = () => {
     // check if already logged in
     useEffect(() => {
         const token = localStorage.getItem("token");
-        if (token) {
+        const role = localStorage.getItem("role");
+        if (token && role === "merchant") {
             navigate("/merchant/home");
         }
     }, [navigate]);

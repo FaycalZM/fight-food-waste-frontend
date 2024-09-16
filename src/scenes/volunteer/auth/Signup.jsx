@@ -4,9 +4,13 @@ import { useTheme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 import VolunteerActivismOutlinedIcon from '@mui/icons-material/VolunteerActivismOutlined';
 import { Link } from "react-router-dom";
+import apiUrl from "@/base";
+import axios from "axios";
 
 const VolunteerSignup = () => {
     const theme = useTheme(); // Use the provided theme
+    const [error, setError] = useState("");
+    const [response, setResponse] = useState("");
     const [formData, setFormData] = useState({
         name: "",
         email: "",
@@ -16,28 +20,31 @@ const VolunteerSignup = () => {
         availability_start: "",
         availability_end: "",
         password: "",
-        confirmedPassword: "",
+        password_confirmation: "",
     });
 
     const [skills, setSkills] = useState([]); // Skills list
 
     const navigate = useNavigate();
 
-    // Fetch skills (simulate API call or fetch from server)
+    // Fetch skills 
     useEffect(() => {
-        // Replace this with real API call
-        const fetchSkills = async () => {
-            // Replace this with your API or data fetching logic
-            const skillsData = [
-                { id: 1, name: "Skill A" },
-                { id: 2, name: "Skill B" },
-                { id: 3, name: "Skill C" },
-            ];
-            setSkills(skillsData);
-        };
-
-        fetchSkills();
+        axios
+            .get(`${apiUrl}/admin/all_skills`)
+            .then((response) => {
+                setSkills(response.data);
+            }).catch((error) => {
+                console.error('Error fetching skills:', error);
+            })
     }, []);
+    // check if already logged in
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        const role = localStorage.getItem("role");
+        if (token && role === "volunteer") {
+            navigate("/volunteer/home");
+        }
+    }, [navigate]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -46,10 +53,23 @@ const VolunteerSignup = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Add signup logic here
-        console.log("Volunteer Signup Data:", formData);
-        // Redirect after signup
-        // navigate("/volunteer/dashboard");
+        formData.availability_start = formData.availability_start.split(":")[0];
+        formData.availability_end = formData.availability_end.split(":")[0];
+        axios
+            .post(`${apiUrl}/volunteer/register`, formData)
+            .then((response) => {
+                const { volunteer, token } = response.data;
+                localStorage.setItem("id", volunteer.id);
+                localStorage.setItem("name", volunteer.name);
+                localStorage.setItem("email", volunteer.email);
+                localStorage.setItem("skill_id", volunteer.skill_id);
+                localStorage.setItem("token", token);
+                localStorage.setItem("role", "volunteer");
+
+                navigate("/volunteer/home");
+            }).catch((error) => {
+                setError(error.response.data.message);
+            });
     };
 
     return (
@@ -88,6 +108,11 @@ const VolunteerSignup = () => {
                 <Typography variant="h4" align="center" gutterBottom>
                     Volunteer Signup
                 </Typography>
+                {error && (
+                    <Typography variant="body2" color="error" align="center" sx={{ mb: 2 }}>
+                        {error}
+                    </Typography>
+                )}
                 <form onSubmit={handleSubmit}>
                     <TextField
                         label="Name"
@@ -159,7 +184,7 @@ const VolunteerSignup = () => {
                                 shrink: true,
                             },
                             htmlInput: {
-                                step: 300, // 5 minutes
+                                step: 3600, // 1 hour
                             }
                         }}
                     />
@@ -177,7 +202,7 @@ const VolunteerSignup = () => {
                                 shrink: true,
                             },
                             htmlInput: {
-                                step: 300, // 5 minutes
+                                step: 3600, // 1 hour
                             }
                         }}
                     />
@@ -193,8 +218,8 @@ const VolunteerSignup = () => {
                     />
                     <TextField
                         label="Confirm Password"
-                        name="confirmPassword"
-                        value={formData.confirmPassword}
+                        name="password_confirmation"
+                        value={formData.password_confirmation}
                         onChange={handleChange}
                         fullWidth
                         margin="normal"

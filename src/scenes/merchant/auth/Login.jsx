@@ -3,6 +3,7 @@ import { Box, Button, TextField, Typography, Avatar, useTheme } from "@mui/mater
 import StorefrontOutlinedIcon from '@mui/icons-material/StorefrontOutlined';
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import apiUrl from "@/base";
 
 const MerchantLogin = ({ onLogin }) => {
     const theme = useTheme();
@@ -20,7 +21,8 @@ const MerchantLogin = ({ onLogin }) => {
     // check if already logged in
     useEffect(() => {
         const token = localStorage.getItem("token");
-        if (token) {
+        const role = localStorage.getItem("role");
+        if (token && role === "merchant") {
             onLogin();
             navigate("/merchant/home");
         }
@@ -29,7 +31,7 @@ const MerchantLogin = ({ onLogin }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        axios.post("http://localhost:8000/api/merchant/login", formData)
+        axios.post(`${apiUrl}/merchant/login`, formData)
             .then((response) => {
                 const { User, token } = response.data;
                 // check if merchant is approved
@@ -38,6 +40,7 @@ const MerchantLogin = ({ onLogin }) => {
                     localStorage.setItem("name", User.name);
                     localStorage.setItem("email", User.email);
                     localStorage.setItem("token", token);
+                    localStorage.setItem("role", "merchant");
 
                     onLogin(); // Call parent function to log in as merchant
                     navigate("/merchant/home");

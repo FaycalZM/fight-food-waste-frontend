@@ -14,7 +14,8 @@ const AdminLogin = ({ onLogin }) => {
     // check if already logged in
     useEffect(() => {
         const token = localStorage.getItem("token");
-        if (token) {
+        const role = localStorage.getItem("role");
+        if (token && role === "admin") {
             onLogin();
             navigate("/admin/dashboard");
         }
@@ -30,6 +31,7 @@ const AdminLogin = ({ onLogin }) => {
                 localStorage.setItem("name", admin.name);
                 localStorage.setItem("email", admin.email);
                 localStorage.setItem("token", token);
+                localStorage.setItem("role", "admin");
 
                 onLogin(); // Call parent function to log in as admin
                 navigate("/admin/dashboard");

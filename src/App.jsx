@@ -41,6 +41,7 @@ import DistributionsHistory from "./scenes/admin/distributions/History";
 import DistributionsDetails from "./scenes/admin/distributions/Details";
 import InProgressDistributions from "./scenes/admin/distributions/InProgress";
 import MerchantHome from "./scenes/merchant/home/Home";
+import VolunteerHome from "./scenes/volunteer/home/Home";
 
 
 
@@ -110,10 +111,14 @@ function App() {
 
 
             {/* Merchant routes */}
-
             <Route path="/merchant/home" element={<MerchantHome />} />
-
             {/* Volunteer routes */}
+            <Route path="/volunteer/home" element={<VolunteerHome />} />
+
+
+
+
+
             <Route path="/team" element={<Team />} />
             <Route path="/contacts" element={<Contacts />} />
             <Route path="/invoices" element={<Invoices />} />

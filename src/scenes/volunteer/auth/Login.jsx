@@ -1,10 +1,14 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Button, TextField, Typography, Avatar, useTheme } from "@mui/material";
 import VolunteerActivismOutlinedIcon from '@mui/icons-material/VolunteerActivismOutlined';
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import apiUrl from "@/base";
 
 const VolunteerLogin = ({ onLogin }) => {
     const theme = useTheme();
+    const navigate = useNavigate();
+    const [error, setError] = useState("");
     const [formData, setFormData] = useState({
         email: "",
         password: "",
@@ -15,11 +19,34 @@ const VolunteerLogin = ({ onLogin }) => {
         setFormData({ ...formData, [name]: value });
     };
 
+    // check if already logged in
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        const role = localStorage.getItem("role");
+        if (token && role === "volunteer") {
+            onLogin();
+            navigate("/volunteer/home");
+        }
+    }, [navigate, onLogin]);
+
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Add form submission logic here
-        onLogin();
-        console.log(formData);
+        axios.post(`${apiUrl}/volunteer/login`, formData)
+            .then((response) => {
+                const { volunteer, token } = response.data;
+                // check if merchant is approved
+                localStorage.setItem("id", volunteer.id);
+                localStorage.setItem("name", volunteer.name);
+                localStorage.setItem("email", volunteer.email);
+                localStorage.setItem("skill_id", volunteer.skill_id);
+                localStorage.setItem("token", token);
+                localStorage.setItem("role", "volunteer");
+
+                onLogin(); // Call parent function to log in as volunteer
+                navigate("/volunteer/home");
+            }).catch((error) => {
+                setError(error.response.data.message);
+            });
     };
 
     return (
@@ -58,6 +85,11 @@ const VolunteerLogin = ({ onLogin }) => {
                 <Typography variant="h4" align="center" gutterBottom>
                     Volunteer Login
                 </Typography>
+                {error && (
+                    <Typography variant="body2" color="error" align="center" sx={{ mb: 2 }}>
+                        {error}
+                    </Typography>
+                )}
                 <form onSubmit={handleSubmit}>
 
                     <TextField

@@ -15,9 +15,9 @@ export const DataProvider = ({ children }) => {
     const logout = () => {
         setIsAuthenticated(false);
         setUserType(null);
-        localStorage.removeItem("user_id");
-        localStorage.removeItem("user_token");
-        localStorage.removeItem("user_role");
+        localStorage.removeItem("id");
+        localStorage.removeItem("token");
+        localStorage.removeItem("role");
     };
 
 

@@ -5,10 +5,47 @@ import { mockDataTeam } from "@/data/mockData";
 import DoneOutlinedIcon from '@mui/icons-material/DoneOutlined';
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 import Header from "@/components/Header";
+import { useContext } from "react";
+import { DataContext } from "@/context/DataContext";
+import axios from "axios";
+import apiUrl from "@/base";
 
 const NewApplications = () => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
+
+    const { volunteers, setVolunteers } = useContext(DataContext);
+    const rowData = volunteers.pending;
+
+    const approve_subscription = (id) => {
+        axios
+            .get(`${apiUrl}/admin/volunteers/${id}/approve_membership`)
+            .then((res) => {
+                // update state
+                setVolunteers({
+                    ...volunteers,
+                    pending: volunteers.pending.filter((volunteer) => volunteer.id !== id),
+                    active: [...volunteers.active, res.data.User],
+                });
+            }).catch((error) => {
+                console.log(error);
+            });
+    }
+
+    const reject_subscription = (id) => {
+        axios
+            .get(`${apiUrl}/admin/volunteers/${id}/reject_subscription`)
+            .then((res) => {
+                // update state
+                setVolunteers({
+                    ...volunteers,
+                    pending: volunteers.pending.filter((volunteer) => volunteer.id !== id)
+                });
+            }).catch((error) => {
+                console.log(error);
+            });
+    }
+
     const columns = [
         {
             field: "id",
@@ -36,20 +73,22 @@ const NewApplications = () => {
             flex: 1,
         },
         {
-            field: "skill",
+            field: "skillName",
             headerName: "Skill",
-            flex: 1,
         },
         {
-            field: "availability",
-            headerName: "Availability",
-            flex: 1,
+            field: "availability_start",
+            headerName: "Available From",
+        },
+        {
+            field: "availability_end",
+            headerName: "Available To",
         },
         {
             field: "action",
             headerName: "Action",
-            flex: 1,
-            renderCell: ({ row: { access } }) => {
+            flex: 1.25,
+            renderCell: ({ row: { id } }) => {
                 return (
                     <Box
                         display={"flex"}
@@ -63,6 +102,7 @@ const NewApplications = () => {
                             color="secondary"
                             variant="contained"
                             startIcon={<DoneOutlinedIcon />}
+                            onClick={() => approve_subscription(id)}
                         >
                             Validate
                         </Button>
@@ -70,6 +110,7 @@ const NewApplications = () => {
                             color="error"
                             variant="contained"
                             startIcon={<CloseOutlinedIcon />}
+                            onClick={() => reject_subscription(id)}
                         >
                             Reject
                         </Button>
@@ -111,7 +152,7 @@ const NewApplications = () => {
                     },
                 }}
             >
-                <DataGrid checkboxSelection rows={mockDataTeam} columns={columns} />
+                <DataGrid checkboxSelection rows={rowData} columns={columns} />
             </Box>
         </Box>
     );

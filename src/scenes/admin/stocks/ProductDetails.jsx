@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { Box, Typography, Paper, List, ListItem, ListItemText } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { useParams } from "react-router-dom";
+import axios from "axios";
+import apiUrl from "@/base";
 
 const ProductDetails = () => {
     const { id } = useParams(); // Get product ID from route
@@ -10,29 +12,37 @@ const ProductDetails = () => {
     // State to hold product details
     const [productDetails, setProductDetails] = useState({
         id: "",
-        name: "",
+        product_name: "",
         category: "",
-        merchant: "",
-        expirationDate: "",
+        barcode: "",
+        expiration_date: "",
+        user_id: ""
     });
+    const [merchant, setMerchant] = useState("");
 
-    // Simulate fetching product details based on ID (replace with actual API call)
+    // fetch product details based on ID 
     useEffect(() => {
-        const fetchProductDetails = async () => {
-            // Replace with real API call using `id`
-            const mockData = {
-                id: id,
-                name: "Sample Product",
-                category: "Electronics",
-                merchant: "Merchant A",
-                expirationDate: "2024-12-31",
-            };
-
-            setProductDetails(mockData);
-        };
-
-        fetchProductDetails();
+        axios
+            .get(`${apiUrl}/admin/products/${id}`)
+            .then((res) => {
+                setProductDetails(res.data.product);
+            }).catch((error) => {
+                console.log(error);
+            });
     }, [id]);
+
+    // fetch merchant details based on user_id
+    useEffect(() => {
+        if (productDetails.user_id) {
+            axios
+                .get(`${apiUrl}/admin/merchants/${productDetails.user_id}`)
+                .then((res) => {
+                    setMerchant(res.data.User.name);
+                }).catch((error) => {
+                    console.log(error);
+                });
+        }
+    }, [productDetails]);
 
     return (
         <Box
@@ -58,22 +68,25 @@ const ProductDetails = () => {
                 }}
             >
                 <Typography variant="h4" gutterBottom align="center">
-                    Product Details (ID: {productDetails.id})
+                    Product Details ({productDetails.product_name})
                 </Typography>
 
                 <Paper elevation={3} sx={{ p: 2, mt: 3 }}>
                     <List>
                         <ListItem>
-                            <ListItemText primary="Product Name" secondary={productDetails.name} />
+                            <ListItemText primary="Product Name" secondary={productDetails.product_name} />
                         </ListItem>
                         <ListItem>
                             <ListItemText primary="Category" secondary={productDetails.category} />
                         </ListItem>
                         <ListItem>
-                            <ListItemText primary="Merchant (Owner)" secondary={productDetails.merchant} />
+                            <ListItemText primary="Barcode" secondary={productDetails.barcode} />
                         </ListItem>
                         <ListItem>
-                            <ListItemText primary="Expiration Date" secondary={productDetails.expirationDate} />
+                            <ListItemText primary="Expiration Date" secondary={productDetails.expiration_date} />
+                        </ListItem>
+                        <ListItem>
+                            <ListItemText primary="Merchant (Owner)" secondary={merchant} />
                         </ListItem>
                     </List>
                 </Paper>

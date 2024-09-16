@@ -21,6 +21,8 @@ export const DataProvider = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [userType, setUserType] = useState(null);
 
+
+
     // Merchants state
     const [merchants, setMerchants] = useState(merchantsInitialState);
 
@@ -92,6 +94,34 @@ export const DataProvider = ({ children }) => {
             });
     }, []);
 
+    // Stocks state
+    const [stocks, setStocks] = useState([]);
+
+    useEffect(() => {
+        // fetch stocks
+        axios
+            .get(`${apiUrl}/admin/all_stocks`)
+            .then((res) => {
+                setStocks(res.data);
+            }).catch((error) => {
+                console.log(error);
+            })
+    }, []);
+
+    // Products state
+    const [products, setProducts] = useState([]);
+
+    useEffect(() => {
+        // fetch products
+        axios
+            .get(`${apiUrl}/admin/all_products`)
+            .then((res) => {
+                setProducts(res.data);
+            }).catch((error) => {
+                console.log(error);
+            })
+    }, []);
+
     // Auth functions
     const login = (userType) => {
         setIsAuthenticated(true);
@@ -115,9 +145,13 @@ export const DataProvider = ({ children }) => {
                 login,
                 logout,
                 merchants,
-                setMerchants,
                 volunteers,
+                stocks,
+                products,
+                setMerchants,
                 setVolunteers,
+                setStocks,
+                setProducts,
             }}>
             {children}
         </DataContext.Provider>

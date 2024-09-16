@@ -7,21 +7,45 @@ import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import WarehouseOutlinedIcon from '@mui/icons-material/WarehouseOutlined';
 import Header from "@/components/Header";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import { useEffect, useState } from "react";
+import apiUrl from "@/base";
+import axios from "axios";
 
 
 const StockDetails = () => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
     const navigate = useNavigate();
+    // stock id
+    const { id } = useParams();
+    const [stockDetails, setStockDetails] = useState({
+        stock: null,
+        products: []
+    });
+
+    useEffect(() => {
+        // fetch stock details
+        axios
+            .get(`${apiUrl}/admin/stocks/${id}`)
+            .then((res) => {
+                setStockDetails({
+                    stock: res.data.stock,
+                    products: res.data.stock_products.filter((product) => product.quantity > 0)
+                });
+            }).catch((error) => {
+                console.log(error);
+            })
+    }, [id]);
+
     const columns = [
         {
             field: "id",
             headerName: "ID"
         },
         {
-            field: "name",
+            field: "product",
             headerName: "Product name",
             flex: 1,
         },
@@ -51,13 +75,6 @@ const StockDetails = () => {
                             onClick={() => navigate(`/admin/stocks/products/${id}`)}
                         >
                             view details
-                        </Button>
-                        <Button
-                            color="error"
-                            variant="contained"
-                            startIcon={<CloseOutlinedIcon />}
-                        >
-                            Delete
                         </Button>
                     </Box>
 
@@ -99,7 +116,7 @@ const StockDetails = () => {
                     },
                 }}
             >
-                <DataGrid checkboxSelection rows={mockDataTeam} columns={columns} />
+                <DataGrid checkboxSelection rows={stockDetails.products} columns={columns} />
             </Box>
         </Box>
     );

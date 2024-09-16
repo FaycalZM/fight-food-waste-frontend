@@ -1,15 +1,22 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { Box, Button, TextField, Typography, Avatar, MenuItem, Select, InputLabel, FormControl } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 import WarehouseOutlinedIcon from '@mui/icons-material/WarehouseOutlined';
 import { Link } from "react-router-dom";
+import { DataContext } from "@/context/DataContext";
+import axios from "axios";
+import apiUrl from "@/base";
 
 const AddStock = () => {
     const theme = useTheme(); // Use the provided theme
     const [formData, setFormData] = useState({
         warehouse_location: "",
     });
+
+    const { stocks, setStocks } = useContext(DataContext);
+    const [error, setError] = useState("");
+    const [response, setResponse] = useState("");
 
     const navigate = useNavigate();
 
@@ -20,10 +27,16 @@ const AddStock = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Add stock creation logic here
-        console.log("Created stock:", formData);
-        // Redirect after successfull creation
-        // navigate("/admin/stocks");
+        axios
+            .post(`${apiUrl}/admin/add_stock`, formData)
+            .then((res) => {
+                setStocks([...stocks, res.data.stock]);
+                setResponse(res.data.message);
+                setError("");
+            }).catch((error) => {
+                setError(error.response.data.message);
+                setResponse("");
+            })
     };
 
     return (
@@ -62,17 +75,17 @@ const AddStock = () => {
                 <Typography variant="h4" align="center" gutterBottom>
                     Add New Stock
                 </Typography>
+                {response && (
+                    <Typography variant="body2" color="success" align="center" sx={{ mb: 2 }}>
+                        {response}
+                    </Typography>
+                )}
+                {error && (
+                    <Typography variant="body2" color="error" align="center" sx={{ mb: 2 }}>
+                        {error}
+                    </Typography>
+                )}
                 <form onSubmit={handleSubmit}>
-                    <TextField
-                        label="Quantity"
-                        name="quantity_in_stock"
-                        value={formData.quantity_in_stock}
-                        onChange={handleChange}
-                        fullWidth
-                        margin="normal"
-                        variant="outlined"
-                        type="number"
-                    />
                     <TextField
                         label="Warehouse Location"
                         name="warehouse_location"
@@ -83,24 +96,6 @@ const AddStock = () => {
                         variant="outlined"
                         type="text"
                     />
-
-                    <FormControl fullWidth margin="normal">
-                        <InputLabel id="skill-label">Product</InputLabel>
-                        <Select
-                            labelId="product-label"
-                            id="product_id"
-                            name="product_id"
-                            value={formData.product_id}
-                            label="Product"
-                            onChange={handleChange}
-                        >
-                            {products.map((product) => (
-                                <MenuItem key={product.id} value={product.id}>
-                                    {product.name}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
 
                     <Button
                         type="submit"

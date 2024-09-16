@@ -9,12 +9,19 @@ import WarehouseOutlinedIcon from '@mui/icons-material/WarehouseOutlined';
 import Header from "@/components/Header";
 import { useNavigate } from "react-router";
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import { useContext } from "react";
+import { DataContext } from "@/context/DataContext";
+import axios from "axios";
+import apiUrl from "@/base";
 
 
 const Stocks = () => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
     const navigate = useNavigate();
+
+    const { stocks, setStocks } = useContext(DataContext);
+
     const columns = [
         {
             field: "id",
@@ -55,15 +62,7 @@ const Stocks = () => {
                         >
                             Add Product
                         </Button>
-                        <Button
-                            color="error"
-                            variant="contained"
-                            startIcon={<CloseOutlinedIcon />}
-                        >
-                            Delete
-                        </Button>
                     </Box>
-
                 );
             },
         },
@@ -118,7 +117,11 @@ const Stocks = () => {
                     },
                 }}
             >
-                <DataGrid checkboxSelection rows={mockDataTeam} columns={columns} />
+                <DataGrid
+                    checkboxSelection
+                    rows={stocks}
+                    columns={columns}
+                />
             </Box>
         </Box>
     );

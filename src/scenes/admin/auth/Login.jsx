@@ -1,18 +1,42 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Box, Button, TextField, Typography, Avatar, useTheme } from "@mui/material";
 import AdminPanelSettingsOutlinedIcon from '@mui/icons-material/AdminPanelSettingsOutlined';
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const AdminLogin = ({ onLogin }) => {
     const theme = useTheme(); // Use the provided theme
     const [credentials, setCredentials] = useState({ email: "", password: "" });
+    const [error, setError] = useState("");
     const navigate = useNavigate();
+
+
+    // check if already logged in
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        if (token) {
+            onLogin();
+            navigate("/admin/dashboard");
+        }
+    }, [navigate, onLogin]);
+
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Add login logic here
-        onLogin(); // Call parent function to log in as admin
-        navigate("/admin/dashboard");
+        axios.post("http://localhost:8000/api/admin/login", credentials)
+            .then((response) => {
+                const { admin, token } = response.data;
+                localStorage.setItem("id", admin.id);
+                localStorage.setItem("name", admin.name);
+                localStorage.setItem("email", admin.email);
+                localStorage.setItem("token", token);
+
+                onLogin(); // Call parent function to log in as admin
+                navigate("/admin/dashboard");
+
+            }).catch((error) => {
+                setError(error.response.data.message);
+            });
     };
 
     return (
@@ -51,6 +75,11 @@ const AdminLogin = ({ onLogin }) => {
                 <Typography variant="h4" align="center" gutterBottom sx={{ mt: 2 }}>
                     Admin Login
                 </Typography>
+                {error && (
+                    <Typography variant="body2" color="error" align="center" sx={{ mb: 2 }}>
+                        {error}
+                    </Typography>
+                )}
                 <form onSubmit={handleSubmit}>
                     <TextField
                         label="Email"

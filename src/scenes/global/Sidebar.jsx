@@ -100,7 +100,7 @@ const Sidebar = ({ userType }) => {
                   fontWeight="bold"
                   sx={{ m: "10px 0 0 0" }}
                 >
-                  Ed Roh
+                  {localStorage.getItem("name")}
                 </Typography>
                 <Typography variant="h5" color={colors.greenAccent[500]} textTransform={"capitalize"}>
                   {userType}

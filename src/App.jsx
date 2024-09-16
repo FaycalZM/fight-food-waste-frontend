@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Routes, Route } from "react-router-dom";
 import Dashboard from "@/scenes/dashboard";
 import Team from "@/scenes/team";
@@ -42,20 +42,14 @@ import DistributionsDetails from "./scenes/admin/distributions/Details";
 import InProgressDistributions from "./scenes/admin/distributions/InProgress";
 import MerchantHome from "./scenes/merchant/home/Home";
 import VolunteerHome from "./scenes/volunteer/home/Home";
+import ProtectedRoute from "./components/ProtectedRoute";
 
+import { DataContext } from "./context/DataContext";
 
 
 function App() {
   const [theme, colorMode] = useMode();
-  const [isSidebar, setIsSidebar] = useState(true);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [userType, setUserType] = useState("admin");
-
-
-  const login = (userType) => {
-    setIsAuthenticated(true);
-    setUserType(userType);
-  }
+  const { userType, login } = useContext(DataContext);
 
   return (
     <ColorModeContext.Provider value={colorMode}>
@@ -82,38 +76,40 @@ function App() {
             />}
           >
             {/* Admin routes */}
-            <Route path="/admin/dashboard" element={<Dashboard />} />
+            <Route
+              path="/admin/dashboard"
+              element={<ProtectedRoute role="admin" children={<Dashboard />} />} />
 
-            <Route path="/admin/merchants/new" element={<NewSubscriptions />} />
-            <Route path="/admin/merchants/partners" element={<Partners />} />
+            <Route path="/admin/merchants/new" element={<ProtectedRoute role={"admin"} children={<NewSubscriptions />} />} />
+            <Route path="/admin/merchants/partners" element={<ProtectedRoute role={"admin"} children={<Partners />} />} />
 
-            <Route path="/admin/volunteers/new" element={<NewApplications />} />
-            <Route path="/admin/volunteers/members" element={<Members />} />
+            <Route path="/admin/volunteers/new" element={<ProtectedRoute role={"admin"} children={<NewApplications />} />} />
+            <Route path="/admin/volunteers/members" element={<ProtectedRoute role={"admin"} children={<Members />} />} />
 
-            <Route path="/admin/stocks" element={<Stocks />} />
-            <Route path="/admin/stocks/add" element={<AddStock />} />
-            <Route path="/admin/stocks/:id/products/add" element={<AddProductToStock />} />
-            <Route path="/admin/stocks/:id" element={<StockDetails />} />
-            <Route path="/admin/stocks/products/:id" element={<ProductDetails />} />
+            <Route path="/admin/stocks" element={<ProtectedRoute role={"admin"} children={<Stocks />} />} />
+            <Route path="/admin/stocks/add" element={<ProtectedRoute role={"admin"} children={<AddStock />} />} />
+            <Route path="/admin/stocks/:id/products/add" element={<ProtectedRoute role={"admin"} children={<AddProductToStock />} />} />
+            <Route path="/admin/stocks/:id" element={<ProtectedRoute role={"admin"} children={<StockDetails />} />} />
+            <Route path="/admin/stocks/products/:id" element={<ProtectedRoute role={"admin"} children={<ProductDetails />} />} />
 
-            <Route path="/admin/collections/planning" element={<CollectionPlanning />} />
-            <Route path="/admin/collections/history" element={<CollectionsHistory />} />
-            <Route path="/admin/collections/:id" element={<CollectionDetails />} />
-            <Route path="/admin/collections/in-progress" element={<InProgressCollections />} />
-            <Route path="/admin/collections/:id/update" element={<UpdateCollection />} />
+            <Route path="/admin/collections/planning" element={<ProtectedRoute role={"admin"} children={<CollectionPlanning />} />} />
+            <Route path="/admin/collections/history" element={<ProtectedRoute role={"admin"} children={<CollectionsHistory />} />} />
+            <Route path="/admin/collections/:id" element={<ProtectedRoute role={"admin"} children={<CollectionDetails />} />} />
+            <Route path="/admin/collections/in-progress" element={<ProtectedRoute role={"admin"} children={<InProgressCollections />} />} />
+            <Route path="/admin/collections/:id/update" element={<ProtectedRoute role={"admin"} children={<UpdateCollection />} />} />
 
-            <Route path="/admin/distributions/planning" element={<DistributionsPlanning />} />
-            <Route path="/admin/distributions/history" element={<DistributionsHistory />} />
-            <Route path="/admin/distributions/:id" element={<DistributionsDetails />} />
-            <Route path="/admin/distributions/in-progress" element={<InProgressDistributions />} />
-            <Route path="/admin/distributions/:id/add-product" element={<AddProductToDistribution />} />
-            <Route path="/admin/distributions/:id/add-beneficiary" element={<AddBeneficiaryToDistribution />} />
+            <Route path="/admin/distributions/planning" element={<ProtectedRoute role={"admin"} children={<DistributionsPlanning />} />} />
+            <Route path="/admin/distributions/history" element={<ProtectedRoute role={"admin"} children={<DistributionsHistory />} />} />
+            <Route path="/admin/distributions/:id" element={<ProtectedRoute role={"admin"} children={<DistributionsDetails />} />} />
+            <Route path="/admin/distributions/in-progress" element={<ProtectedRoute role={"admin"} children={<InProgressDistributions />} />} />
+            <Route path="/admin/distributions/:id/add-product" element={<ProtectedRoute role={"admin"} children={<AddProductToDistribution />} />} />
+            <Route path="/admin/distributions/:id/add-beneficiary" element={<ProtectedRoute role={"admin"} children={<AddBeneficiaryToDistribution />} />} />
 
 
             {/* Merchant routes */}
-            <Route path="/merchant/home" element={<MerchantHome />} />
+            <Route path="/merchant/home" element={<ProtectedRoute role={"merchant"} children={<MerchantHome />} />} />
             {/* Volunteer routes */}
-            <Route path="/volunteer/home" element={<VolunteerHome />} />
+            <Route path="/volunteer/home" element={<ProtectedRoute role={"volunteer"} children={<VolunteerHome />} />} />
 
 
 

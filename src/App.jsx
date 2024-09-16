@@ -40,6 +40,7 @@ import AddBeneficiaryToDistribution from "./scenes/admin/distributions/AddBenefi
 import DistributionsHistory from "./scenes/admin/distributions/History";
 import DistributionsDetails from "./scenes/admin/distributions/Details";
 import InProgressDistributions from "./scenes/admin/distributions/InProgress";
+import MerchantHome from "./scenes/merchant/home/Home";
 
 
 
@@ -109,6 +110,8 @@ function App() {
 
 
             {/* Merchant routes */}
+
+            <Route path="/merchant/home" element={<MerchantHome />} />
 
             {/* Volunteer routes */}
             <Route path="/team" element={<Team />} />

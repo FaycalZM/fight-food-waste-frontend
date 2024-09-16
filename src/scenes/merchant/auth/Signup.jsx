@@ -1,11 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Button, TextField, Typography, Avatar, useTheme } from "@mui/material";
 import StorefrontOutlinedIcon from '@mui/icons-material/StorefrontOutlined';
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const MerchantSignup = () => {
     const theme = useTheme();
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         name: "",
         email: "",
@@ -23,6 +24,7 @@ const MerchantSignup = () => {
         setFormData({ ...formData, [name]: value });
     };
 
+
     const handleSubmit = (e) => {
         e.preventDefault();
         axios
@@ -37,6 +39,14 @@ const MerchantSignup = () => {
                 setError(error.response.data.message);
             });
     };
+
+    // check if already logged in
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        if (token) {
+            navigate("/merchant/home");
+        }
+    }, [navigate]);
 
     return (
         <Box

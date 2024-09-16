@@ -1,26 +1,52 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Button, TextField, Typography, Avatar, useTheme } from "@mui/material";
 import StorefrontOutlinedIcon from '@mui/icons-material/StorefrontOutlined';
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const MerchantLogin = ({ onLogin }) => {
     const theme = useTheme();
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         email: "",
         password: "",
     });
-
+    const [error, setError] = useState("");
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
     };
 
+    // check if already logged in
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        if (token) {
+            onLogin();
+            navigate("/merchant/home");
+        }
+    }, [navigate, onLogin]);
+
+
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Add form submission logic here
-        onLogin();
-        console.log(formData);
+        axios.post("http://localhost:8000/api/merchant/login", formData)
+            .then((response) => {
+                const { User, token } = response.data;
+                // check if merchant is approved
+                if (User.membership_status === "active") {
+                    localStorage.setItem("id", User.id);
+                    localStorage.setItem("name", User.name);
+                    localStorage.setItem("email", User.email);
+                    localStorage.setItem("token", token);
+
+                    onLogin(); // Call parent function to log in as merchant
+                    navigate("/merchant/home");
+                }
+            }).catch((error) => {
+                setError(error.response.data.message);
+            });
     };
+
 
     return (
         <Box
@@ -58,6 +84,11 @@ const MerchantLogin = ({ onLogin }) => {
                 <Typography variant="h4" align="center" gutterBottom>
                     Merchant Login
                 </Typography>
+                {error && (
+                    <Typography variant="body2" color="error" align="center" sx={{ mb: 2 }}>
+                        {error}
+                    </Typography>
+                )}
                 <form onSubmit={handleSubmit}>
 
                     <TextField

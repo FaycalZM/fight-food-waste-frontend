@@ -9,12 +9,33 @@ import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import AddShoppingCartOutlinedIcon from '@mui/icons-material/AddShoppingCartOutlined';
 import AddReactionOutlinedIcon from '@mui/icons-material/AddReactionOutlined';
+import { useContext } from "react";
+import { DataContext } from "@/context/DataContext";
+import axios from "axios";
+import apiUrl from "@/base";
 
 
 const InProgressDistributions = () => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
     const navigate = useNavigate();
+
+    const { distributions, setDistributions } = useContext(DataContext);
+
+    const close_distribution = (id) => {
+        axios
+            .get(`${apiUrl}/admin/distributions/${id}/close`)
+            .then((res) => {
+                setDistributions({
+                    ...distributions,
+                    in_progress: distributions.in_progress.filter((distribution) => distribution.id !== id),
+                    completed: [...distributions.completed, res.data.distribution],
+                });
+            }).catch((error) => {
+                console.log(error);
+            })
+    }
+
     const columns = [
         {
             field: "id",
@@ -52,23 +73,16 @@ const InProgressDistributions = () => {
                         <Button
                             color="secondary"
                             variant="contained"
-                            startIcon={<AddShoppingCartOutlinedIcon />}
-                            onClick={() => navigate(`/admin/distributions/${id}/add-product`)}
+                            startIcon={<InfoOutlinedIcon />}
+                            onClick={() => navigate(`/admin/distributions/${id}`)}
                         >
-                            Add Product
-                        </Button>
-                        <Button
-                            color="success"
-                            variant="contained"
-                            startIcon={<AddReactionOutlinedIcon />}
-                            onClick={() => navigate(`/admin/distributions/${id}/add-beneficiary`)}
-                        >
-                            Add Beneficiary
+                            View Details
                         </Button>
                         <Button
                             color="error"
                             variant="contained"
                             startIcon={<CloseOutlinedIcon />}
+                            onClick={() => close_distribution(id)}
                         >
                             Close Distribution
                         </Button>
@@ -110,7 +124,7 @@ const InProgressDistributions = () => {
                     },
                 }}
             >
-                <DataGrid checkboxSelection rows={mockDataTeam} columns={columns} />
+                <DataGrid checkboxSelection rows={distributions.in_progress} columns={columns} />
             </Box>
         </Box>
     );

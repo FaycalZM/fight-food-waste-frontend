@@ -19,6 +19,8 @@ const collectionsInitialState = {
     completed: [],
 }
 
+const distributionsInitialState = collectionsInitialState;
+
 
 export const DataContext = createContext();
 
@@ -146,6 +148,37 @@ export const DataProvider = ({ children }) => {
             })
     }, []);
 
+    // Distributions state
+    const [distributions, setDistributions] = useState(distributionsInitialState);
+
+    useEffect(() => {
+        // fetch distributions
+        axios
+            .get(`${apiUrl}/admin/all_distributions`)
+            .then((res) => {
+                setDistributions({
+                    scheduled: res.data.filter((distribution) => distribution.distribution_status === "Scheduled"),
+                    in_progress: res.data.filter((distribution) => distribution.distribution_status === "In Progress"),
+                    completed: res.data.filter((distribution) => distribution.distribution_status === "Completed"),
+                });
+            }).catch((error) => {
+                console.log(error);
+            })
+    }, []);
+
+    // Beneficiaries state
+    const [beneficiaries, setBeneficiaries] = useState([]);
+    useEffect(() => {
+        // fetch benefeciaries
+        axios
+            .get(`${apiUrl}/admin/all_beneficiaries`)
+            .then((res) => {
+                setBeneficiaries(res.data);
+            }).catch((error) => {
+                console.log(error);
+            })
+    }, []);
+
     // Auth functions
     const login = (userType) => {
         setIsAuthenticated(true);
@@ -173,11 +206,15 @@ export const DataProvider = ({ children }) => {
                 stocks,
                 products,
                 collections,
+                distributions,
+                beneficiaries,
                 setMerchants,
                 setVolunteers,
                 setStocks,
                 setProducts,
                 setCollections,
+                setDistributions,
+                setBeneficiaries,
             }}>
             {children}
         </DataContext.Provider>

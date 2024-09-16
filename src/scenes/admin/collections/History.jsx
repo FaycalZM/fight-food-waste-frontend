@@ -79,6 +79,7 @@ const CollectionsHistory = () => {
                             color="success"
                             variant="contained"
                             startIcon={<DownloadOutlinedIcon />}
+                        // TODO: add download report function
                         >
                             Download Report
                         </Button>

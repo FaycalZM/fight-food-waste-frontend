@@ -7,12 +7,32 @@ import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined";
 import Header from "@/components/Header";
 import { useNavigate } from "react-router";
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import { useContext } from "react";
+import { DataContext } from "@/context/DataContext";
+import axios from "axios";
+import apiUrl from "@/base";
 
 
 const DistributionsHistory = () => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
     const navigate = useNavigate();
+
+    const { distributions, setDistributions } = useContext(DataContext);
+
+    const delete_distribution = (id) => {
+        axios
+            .get(`${apiUrl}/admin/distributions/${id}/delete`)
+            .then((res) => {
+                setDistributions({
+                    ...distributions,
+                    completed: distributions.completed.filter((distribution) => distribution.id !== id),
+                });
+            }).catch((error) => {
+                console.log(error);
+            })
+    }
+
     const columns = [
         {
             field: "id",
@@ -59,6 +79,7 @@ const DistributionsHistory = () => {
                             color="success"
                             variant="contained"
                             startIcon={<DownloadOutlinedIcon />}
+                        // TODO: add download report function
                         >
                             Download Report
                         </Button>
@@ -66,6 +87,7 @@ const DistributionsHistory = () => {
                             color="error"
                             variant="contained"
                             startIcon={<CloseOutlinedIcon />}
+                            onClick={() => delete_distribution(id)}
                         >
                             Delete History
                         </Button>
@@ -107,7 +129,7 @@ const DistributionsHistory = () => {
                     },
                 }}
             >
-                <DataGrid checkboxSelection rows={mockDataTeam} columns={columns} />
+                <DataGrid checkboxSelection rows={distributions.completed} columns={columns} />
             </Box>
         </Box>
     );

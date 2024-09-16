@@ -116,7 +116,7 @@ const AdminSidebarItems = ({ selected, setSelected }) => {
                 setSelected={setSelected}
             />
             <Item
-                title="In Progress"
+                title="Collections In Progress"
                 to="/admin/collections/in-progress"
                 icon={< HourglassBottomOutlinedIcon />}
                 selected={selected}
@@ -144,7 +144,7 @@ const AdminSidebarItems = ({ selected, setSelected }) => {
                 setSelected={setSelected}
             />
             <Item
-                title="In Progress"
+                title="Distributions In Progress"
                 to="/admin/distributions/in-progress"
                 icon={< HourglassBottomOutlinedIcon />}
                 selected={selected}

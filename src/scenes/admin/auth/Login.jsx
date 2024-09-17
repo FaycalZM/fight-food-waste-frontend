@@ -3,6 +3,7 @@ import { Box, Button, TextField, Typography, Avatar, useTheme } from "@mui/mater
 import AdminPanelSettingsOutlinedIcon from '@mui/icons-material/AdminPanelSettingsOutlined';
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import apiUrl from "@/base";
 
 const AdminLogin = ({ onLogin }) => {
     const theme = useTheme(); // Use the provided theme
@@ -24,7 +25,7 @@ const AdminLogin = ({ onLogin }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        axios.post("http://localhost:8000/api/admin/login", credentials)
+        axios.post(`${apiUrl}/admin/login`, credentials)
             .then((response) => {
                 const { admin, token } = response.data;
                 localStorage.setItem("id", admin.id);
